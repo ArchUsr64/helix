@@ -242,14 +242,19 @@ type SymbolPicker = Picker<SymbolInformationItem>;
 
 fn sym_picker(symbols: Vec<SymbolInformationItem>, current_path: Option<lsp::Url>) -> SymbolPicker {
     // TODO: drop current_path comparison and instead use workspace: bool flag?
-    Picker::new(symbols, current_path, move |cx, item, action| {
-        jump_to_location(
-            cx.editor,
-            &item.symbol.location,
-            item.offset_encoding,
-            action,
-        );
-    })
+    Picker::new(
+        String::from("Symbol Picker"),
+        symbols,
+        current_path,
+        move |cx, item, action| {
+            jump_to_location(
+                cx.editor,
+                &item.symbol.location,
+                item.offset_encoding,
+                action,
+            );
+        },
+    )
     .with_preview(move |_editor, item| Some(location_to_file_location(&item.symbol.location)))
     .truncate_start(false)
 }
@@ -291,7 +296,9 @@ fn diag_picker(
         error: cx.editor.theme.get("error"),
     };
 
+    let picker_title = String::from("Diag Picker");
     Picker::new(
+        picker_title,
         flat_diag,
         (styles, format),
         move |cx,
@@ -1029,9 +1036,15 @@ fn goto_impl(
             editor.set_error("No definition found.");
         }
         _locations => {
-            let picker = Picker::new(locations, cwdir, move |cx, location, action| {
-                jump_to_location(cx.editor, location, offset_encoding, action)
-            })
+            let picker_title = String::from("Goto Picker");
+            let picker = Picker::new(
+                picker_title,
+                locations,
+                cwdir,
+                move |cx, location, action| {
+                    jump_to_location(cx.editor, location, offset_encoding, action)
+                },
+            )
             .with_preview(move |_editor, location| Some(location_to_file_location(location)));
             compositor.push(Box::new(overlaid(picker)));
         }

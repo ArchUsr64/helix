@@ -115,6 +115,7 @@ impl Preview<'_, '_> {
 }
 
 pub struct Picker<T: Item> {
+    title: String,
     options: Vec<T>,
     editor_data: T::Data,
     // filter: String,
@@ -145,6 +146,7 @@ pub struct Picker<T: Item> {
 
 impl<T: Item + 'static> Picker<T> {
     pub fn new(
+        title: String,
         options: Vec<T>,
         editor_data: T::Data,
         callback_fn: impl Fn(&mut Context, &T, Action) + 'static,
@@ -157,6 +159,7 @@ impl<T: Item + 'static> Picker<T> {
         );
 
         let mut picker = Self {
+            title,
             options,
             editor_data,
             matcher: Box::default(),
@@ -757,7 +760,9 @@ impl<T: Item + 'static> Picker<T> {
 
 impl<T: Item + 'static> Component for Picker<T> {
     fn render(&mut self, area: Rect, surface: &mut Surface, cx: &mut Context) {
-        // +---------+ +---------+
+        //        +-------+
+        //        | title |
+        // +------+--+ +--+------+
         // |prompt   | |preview  |
         // +---------+ |         |
         // |picker   | |         |

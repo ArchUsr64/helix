@@ -2219,7 +2219,9 @@ fn global_search(cx: &mut Context) {
                     return;
                 }
 
+                let picker_title = String::from("Global Search");
                 let picker = Picker::new(
+                    picker_title,
                     all_matches,
                     current_path,
                     move |cx, FileResult { path, line_num }, action| {
@@ -2677,7 +2679,8 @@ fn buffer_picker(cx: &mut Context) {
     // mru
     items.sort_unstable_by_key(|item| std::cmp::Reverse(item.focused_at));
 
-    let picker = Picker::new(items, (), |cx, meta, action| {
+    let picker_title = String::from("Buffer Picker");
+    let picker = Picker::new(picker_title, items, (), |cx, meta, action| {
         cx.editor.switch(meta.id, action);
     })
     .with_preview(|editor, meta| {
@@ -2754,7 +2757,9 @@ fn jumplist_picker(cx: &mut Context) {
         }
     };
 
+    let picker_title = String::from("Jump List");
     let picker = Picker::new(
+        picker_title,
         cx.editor
             .tree
             .views()
@@ -2831,7 +2836,8 @@ pub fn command_palette(cx: &mut Context) {
                 }
             }));
 
-            let picker = Picker::new(commands, keymap, move |cx, command, _action| {
+            let title = String::from("Command Pallette");
+            let picker = Picker::new(title, commands, keymap, move |cx, command, _action| {
                 let mut ctx = Context {
                     register,
                     count,
